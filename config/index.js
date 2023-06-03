@@ -10,3 +10,5 @@ mysql.createConnection({
         console.info("Database create or successfully checked");
         // process.exit(0);
     })})
+
+    
