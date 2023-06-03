@@ -42,8 +42,8 @@ items.init({
     }
 },{
     sequelize, // We need to pass the connection instance
-    modelName: "Baj", // We need to choose the model name
-    tableName: "baj",
+    modelName: "itmes", // We need to choose the model name
+    tableName: "itmes",
     paranoid: true,
 })
 
@@ -51,3 +51,7 @@ User.hasMany(items,{
     foreignKey: "userId",
     constraints: false,
     })
+items.belongsTo(User,{foreignKey: "userId",})
+
+
+module.exports = items;

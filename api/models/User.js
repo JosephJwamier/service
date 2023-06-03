@@ -18,7 +18,12 @@ User.init({
     },
     email:{
         type: DataTypes.STRING,
-        allowNull: true
+        allowNull: false
+    },
+    password:{
+        type: DataTypes.STRING,
+        allowNull: false
+
     },
    
     phone:{
@@ -41,8 +46,8 @@ User.init({
     }
 },{
     sequelize, // We need to pass the connection instance
-    modelName: "Baj", // We need to choose the model name
-    tableName: "baj",
+    modelName: "User", // We need to choose the model name
+    tableName: "users",
     paranoid: true,
 })
 
