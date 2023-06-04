@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-
+require('dotenv').config()
 
 exports.sendToken = (req, res, user) => {
   // create Jwt token 

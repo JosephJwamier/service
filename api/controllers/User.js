@@ -63,7 +63,7 @@ exports.register = async (req, res) => {
 exports.login = async (req, res) => {
   try {
     const user = await User.findOne({
-      where: { username: req.body.username }
+      where: { name: req.body.username }
      
     });
     if (!user) {
@@ -89,12 +89,7 @@ exports.login = async (req, res) => {
     
 
   } catch (err) {
-    loggerSys.Log({
-      operationType: loggerSys.Operations.ERROR,
-      operationMessage: err.message,
-      userId: null,
-      userName: "system"
-    })
+  
     res.send({ success: false, message: err.message });
   }
 };
@@ -176,33 +171,28 @@ exports.UpdateUserById = async (req, res) => {
         req.body.password === undefined
           ? undefined
           : await bcrypt.hash(req.body.password, saltRounds);
-      const fullname =
-        req.body.fullname === undefined ? undefined : req.body.fullname;
-      const username =
+      const governorate =
+        req.body.governorate === undefined ? undefined : req.body.governorate;
+      const name =
         req.body.username === undefined ? undefined : req.body.username;
       const email = req.body.email === undefined ? undefined : req.body.email;
       const phone = req.body.phone === undefined ? undefined : req.body.phone;
-      const active = req.body.active === undefined ? undefined : req.body.active;
-      const status = req.body.status === undefined ? undefined : req.body.status;
-      const employeeId =
-        req.body.employeeId === undefined ? null : req.body.employeeId;
-      const UserRoleId =
-        req.body.UserRoleId === undefined ? undefined : req.body.UserRoleId;
+      const online = req.body.status === undefined ? undefined : req.body.status;
+      const location = req.body.location === undefined ? undefined : req.body.location;
+    
 
 
 
       const result = await User.update(
         {
-          fullname: fullname,
-          username: username,
+          governorate: governorate,
+          name: name,
           password: password,
           email: email,
           phone: phone,
-          active: active,
-          status: status,
-          avatar: req.files === undefined || req.files.length === 0 ? undefined : req.files[0].filename,
-          UserRoleId: UserRoleId,
-          EmployeeId: employeeId,
+          online: online,
+          location: location,
+         
         },
         { where: { id: id }, individualHooks: true }
       );
@@ -210,42 +200,14 @@ exports.UpdateUserById = async (req, res) => {
       const user = result[1][0];
 
       if (result[0] > 0) {
-        const dir1 = `./public/assets/images/users/${req.query.supId}/`;
-
-
-        //update is successful
-        if (req.files != undefined && req.files.length != 0 && user._previousDataValues.avatar != undefined) {
-          if (fs.existsSync(dir1 + user._previousDataValues.avatar)) {
-            fs.rmSync(dir1 + user._previousDataValues.avatar, { recursive: true });
-          }
-        }
-        let updatedValues = loggerSys.GetChangedValues({
-          changedValue: user._changed,
-          currentValue: user.dataValues,
-          previousValue: user._previousDataValues
-        })
-        loggerSys.Log({
-          operationType: loggerSys.Operations.UPDATE,
-          operationMessage: loggerSys.UpdateMessage({
-            at: 'مستخدم',
-            name: user.dataValues.username
-          }),
-          userId: req.user.id,
-          userName: req.user.username,
-          data: updatedValues
-        })
-
+       
+       
         res.send({
           success: true,
           message: `User ${user.dataValues.username} updated `,
         });
       } else {
-        loggerSys.Log({
-          operationType: loggerSys.Operations.ERROR,
-          operationMessage: `Cannot update User with id= ${id} .Maybe User was not found or req.body is empty!`,
-          userId: req.user.id,
-          userName: req.user.username
-        })
+       
         res.send({
           success: false,
           message: `Cannot update User with id= ${id} .Maybe User was not found or req.body is empty!`,
@@ -253,19 +215,10 @@ exports.UpdateUserById = async (req, res) => {
       }
     }
   } catch (err) {
-    const dir1 = `./public/assets/images/users/${req.query.supId}/`;
-    if (req.files != undefined && req.files.length != 0) {
-      if (fs.existsSync(dir1 + req.files[0].filename)) {
-        fs.rmSync(dir1 + req.files[0].filename, { recursive: true });
-      }
-    }
-    //?*! edit user catch by abbas
-    loggerSys.Log({
-      operationType: loggerSys.Operations.ERROR,
-      operationMessage: err.message,
-      userId: req.user.id,
-      userName: req.user.username
-    })
+    
+    
+   
+  
     res.send({
       success: false,
       message: err.errors
@@ -281,23 +234,9 @@ exports.getUserById = async (req, res, next) => {
     const id = req.query.userId;
     // console.log(id)
     const user = await User.findOne({
-      where: { id: id },
-      include: [
-        {
-          model: UserRole,
-        },
-        {
-          model: Employee,
-          attributes: [
-            "id",
-            "fullName",
-            "firstName",
-            "secondName",
-            "thirdName",
-            "forthName",
-          ],
-        },
-      ],
+      where: { id: id }
+      
+      
     });
     if (user === null) {
       res.send({
@@ -314,12 +253,7 @@ exports.getUserById = async (req, res, next) => {
     // console.log(user)
 
   } catch (err) {
-    loggerSys.Log({
-      operationType: loggerSys.Operations.ERROR,
-      operationMessage: err.message,
-      userId: req.user.id,
-      userName: req.user.username
-    })
+   
     res.send({
       success: false,
       message: err.message,
@@ -336,39 +270,21 @@ exports.deleteUserById = async (req, res) => {
     const result = await User.destroy({ where: { id: id } });
 
     if (result > 0) {
-      loggerSys.Log({
-        operationType: loggerSys.Operations.DELETE,
-        operationMessage: loggerSys.FinalDeleteMessage({
-          from: 'مستخدم',
-          name: names
-        }),
-        userId: req.user.id,
-        userName: req.user.username
-      })
+      
 
       res.send({
         success: true,
         message: `User with names=[${names}] was deleted successfully!`,
       });
     } else {
-      loggerSys.Log({
-        operationType: loggerSys.Operations.ERROR,
-        operationMessage: `لا يمكن حذف المتسخدم [${names}], قد يكون غير موجود`,
-        userId: req.user.id,
-        userName: req.user.username
-      })
+     
       res.send({
         message: `Cannot delete User with names=[${names}] . Maybe User was not found!`,
         success: false,
       });
     }
   } catch (err) {
-    loggerSys.Log({
-      operationType: loggerSys.Operations.ERROR,
-      operationMessage: err.message,
-      userId: req.user.id,
-      userName: req.user.username
-    })
+    
     res.send({
       success: false,
       message: err.message,
@@ -385,33 +301,18 @@ exports.getAllUsers = async (req, res) => {
       page: req.query.page ? parseInt(req.query.page) : 1, // Default 1
       paginate: req.query.paginate ? parseInt(req.query.paginate) : 25, // Default 25
       where: {
-        username: { [Op.not]: req.user.username },
+        name: { [Op.not]: req.user.username },
 
         [Op.or]: [
           {
-            fullname: { [Op.like]: whereSearch },
+            governorate: { [Op.like]: whereSearch },
           },
           {
-            username: { [Op.like]: whereSearch },
+           name: { [Op.like]: whereSearch },
           },
         ],
       },
-      include: [
-        {
-          model: UserRole,
-        },
-        {
-          model: Employee,
-          attributes: [
-            "id",
-            "fullName",
-            "firstName",
-            "secondName",
-            "thirdName",
-            "forthName",
-          ],
-        },
-      ],
+      
       paranoid: false,
     };
     const users = await User.paginate(options);
@@ -424,12 +325,7 @@ exports.getAllUsers = async (req, res) => {
       users,
     });
   } catch (err) {
-    loggerSys.Log({
-      operationType: loggerSys.Operations.ERROR,
-      operationMessage: err.message,
-      userId: req.user.id,
-      userName: req.user.username
-    })
+  
     res.send({
       success: false,
       message: err.message,
