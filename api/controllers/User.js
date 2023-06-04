@@ -12,7 +12,7 @@ const fs = require("fs");
 exports.register = async (req, res) => {
   try {
     const username = await User.findOne({
-      where: { username: req.body.username },
+      where: { name: req.body.username },
     });
     if (username) {
       return res.json({

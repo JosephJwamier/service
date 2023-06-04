@@ -4,7 +4,7 @@ const {isAuthenticatedUser} = require('../middlewares/isAuth');
 
 
 router.post('/login', controller.login)
-router.post('/register',isAuthenticatedUser, controller.register)
+router.post('/register', controller.register)
 router.get('/logout',isAuthenticatedUser, controller.logout)
 router.get('/profile',isAuthenticatedUser, controller.getUserById)
 router.put('/edit', isAuthenticatedUser,controller.UpdateUserById)

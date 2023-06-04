@@ -27,7 +27,7 @@ User.init({
     },
    
     phone:{
-        type: DataTypes.NUMBER,
+        type: DataTypes.INTEGER,
         allowNull:true,
         unique:false
     },
