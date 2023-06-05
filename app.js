@@ -17,7 +17,7 @@ server.listen(PORT, () => console.log(`server is starting on port http://localho
 //imports routes
 const UserRoutes = require('./api/routes/User');
 const sessionRoutes = require('./api/routes/Session');
-
+const items = require("./api/routes/items");
 
 
 
@@ -55,7 +55,7 @@ function extendDefaultFields(defaults, session) {
   )
 
 
-//usig tools
+//using tools
 app.use(cors({
     origin: "http://localhost:3001",
   },
@@ -77,6 +77,7 @@ app.use(cors({
 //using the routes
 app.use('/api/user', UserRoutes);
 app.use('/api/session', sessionRoutes);
+app.use('/api/items',items)
 
 
 

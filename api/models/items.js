@@ -24,18 +24,15 @@ items.init({
    
     price:{
         type: DataTypes.STRING(50),
-        allowNull:true,
-        unique:false
+        allowNull:false,
+      
     },
     location: {
         type: DataTypes.STRING(50),
         allowNull:true,
         unique:false
     },
-    publishDate:{
-        type: DataTypes.DATE,
-        allowNull:true,
-    },
+ 
     ability:{
         type: DataTypes.BOOLEAN,
         allowNull:true
