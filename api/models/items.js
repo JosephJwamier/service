@@ -32,6 +32,11 @@ items.init({
         allowNull:true,
         unique:false
     },
+    quantity:{
+        type: DataTypes.INTEGER,
+        allowNull:false,
+      
+    },
  
     ability:{
         type: DataTypes.BOOLEAN,

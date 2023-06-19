@@ -17,11 +17,7 @@ pasket.init({
     name :{
         type: DataTypes.STRING(50),
         allowNull: false,
-        references:{
-            model:items,
-            key: 'name'
-
-        }
+  
 
         
     },
@@ -30,26 +26,16 @@ pasket.init({
         type: DataTypes.STRING(50),
         allowNull:true,
         unique:false,
-        references:{
-            model:items,
-            key: 'price'
-
-        },
-        onUpdate: 'CASCADE',
-        onDelete: 'CASCADE'
+    
     },
     location: {
         type: DataTypes.STRING(50),
         allowNull:true,
         unique:false,
-        references:{
-            model:items,
-            key: 'location'
-
-        }
+     
     },
     quantity:{
-        type:DataTypes.NUMBER,
+        type:DataTypes.INTEGER,
         allowNull:false
     }
   

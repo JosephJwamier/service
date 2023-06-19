@@ -18,6 +18,7 @@ server.listen(PORT, () => console.log(`server is starting on port http://localho
 const UserRoutes = require('./api/routes/User');
 const sessionRoutes = require('./api/routes/Session');
 const items = require("./api/routes/items");
+const pasket =require("./api/routes/pasket")
 
 
 
@@ -77,7 +78,8 @@ app.use(cors({
 //using the routes
 app.use('/api/user', UserRoutes);
 app.use('/api/session', sessionRoutes);
-app.use('/api/items',items)
+app.use('/api/items',items);
+app.use('/api/pasket',pasket);
 
 
 

@@ -1,4 +1,5 @@
 const sequelize = require("../../config/database");
+const pasket = require("../models/basket");
 const items = require("../models/items");
 const User = require("../models/User");
 const fs = require( "fs")
@@ -7,24 +8,52 @@ const { Op } = require("sequelize");
 
 exports.create = async (req,res)=>{
     try{
-        const name = req.body.name;
-        const price = req.body.price;
-   
-        if (!name || !price){
-            return res.send("please inter the items name and price");
+        const userId = req.body.userId;
+        const itemsId = req.body.itemsId;
+        const quantity = req.body.quantity;
+        
+        
+        const item = await items.findByPk(itemsId);
+
+        if (!item ) {
+          return res.send('Item not found.');
         }
+        if (item.quantity<quantity){
+          return res.send("no ability to serive you")
+        }
+        
 
-        const result = await items.create(req.body)
+        const result = await pasket.create({
+            userId:userId,
+            itemsId:itemsId,
+            name:items.name,
+            price:item.price,
+            location:item.location,
+            quantity:quantity
 
-        res.send({
-            success: true,
-            message: "item has been added",
-            details: result,
+
         })
+
+        const theRest = item.quantity - result.quantity;
+
+        const rest = await items.update({name:item.name,
+          descrption:item.descrption,
+          price:item.price,
+          quantity:theRest,
+          location:item.location,
+          ability:item.ability,},{ where: { id: item.id }, individualHooks: true });
+
+
+        return  res.send({
+            success: true,
+            message: "item has been added to the basket",
+            details: result,
+            rest:rest,
+      })
 
 
     }catch(err){
-        res.send({
+       return res.send({
             success: false,
             message: err.message,
             
@@ -32,46 +61,6 @@ exports.create = async (req,res)=>{
     }
 
 };
-
-
-exports.updateById = async (req,res)=>{
-    try{
-        const id = req.query.id;
-        
-        if(!id){
-            return res.send ("enter id in the req")
-        }
-
-        const name = req.body.name == undefined ? undefined : req.body.name;
-        const descrption = req.body.descrption == undefined ? undefined : req.body.descrption;
-        const price = req.body.price == undefined ? undefined : req.body.price;
-        const location = req.body.location == undefined ? undefined : req.body.location;
-        const quantity = req.body.quantity == undefined ? undefined : req.body.quantity;
-        const ability = req.body.ability == undefined ? undefined : req.body.ability;
-
-        const result = await items.update({
-            name:name,
-            descrption:descrption,
-            price:price,
-            quantity:quantity,
-            location:location,
-            ability:ability,
-        });
-
-        if(result[0]>0){
-            return res.send(
-                {
-                    success: true,
-                    message: "item has been update",
-                    details: result,   
-                }
-            )
-        }
-
-    }catch(err){
-
-    }
-}
 
 
 exports.deleteItemsById = async (req,res) =>{
